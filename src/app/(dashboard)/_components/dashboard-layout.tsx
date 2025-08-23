@@ -4,9 +4,27 @@ import Link from "next/link";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ThemeToggle } from "@/components/theme-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { Menu, ChevronLeft, Apple, Ruler, Boxes, Utensils, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  ChevronLeft,
+  Apple,
+  Ruler,
+  Boxes,
+  Utensils,
+  ChevronDown, LogOut
+} from "lucide-react";
 
 type RouteGroup = {
   group: string;
@@ -53,17 +71,57 @@ const ROUTE_GROUPS: RouteGroup[] = [
 interface DashboardLayoutProps {
   children: ReactNode;
 }
+const session = true
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [open, setOpen] = useState(false);
   return (
     <div className="flex">
-      <Collapsible.Root open={open} onOpenChange={setOpen}>
-        <Collapsible.Trigger asChild>
-          <Button size="icon" variant="outline">
-            <Menu />
-          </Button>
-        </Collapsible.Trigger>
-      </Collapsible.Root>
+      <div className="bg-background fixed z-10 flex h-13 w-screen items-center justify-between border px-2">
+        <Collapsible.Root open={open} onOpenChange={setOpen}>
+          <Collapsible.Trigger asChild>
+            <Button size="icon" variant="outline">
+              <Menu />
+            </Button>
+          </Collapsible.Trigger>
+        </Collapsible.Root>
+        <div className="flex">
+          <ThemeToggle />
+          {session && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="flex h-9 items-center gap-2 px-2"
+                >
+                  <Avatar className="size-8">
+                    {/* <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback> */}
+                  </Avatar>
+                  {/* <span className="hidden md:inline">{session.user?.name}</span> */}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="flex items-center gap-3 px-2 py-1.5">
+                  <Avatar className="size-10">
+                    {/* <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback> */}
+                  </Avatar>
+                  <div>
+                    {/* <p className="text-sm font-medium">{session.user?.name}</p> */}
+                    <p className="text-muted-foreground text-xs">
+                      {/* {session.user?.email} */}
+                    </p>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive">
+                  <LogOut className="size-4" /> Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+      </div>
 
       <Collapsible.Root
         className="fixed top-0 left-0 z-20 h-dvh"
@@ -105,7 +163,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     </div>
   );
 };
-
 
 type RouteGroupProps = RouteGroup;
 const RouteGroup = ({ group, items }: RouteGroupProps) => {
